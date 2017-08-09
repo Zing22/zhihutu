@@ -1,6 +1,5 @@
-import json, re, argparse
+import argparse
 from queue import Queue
-from time import sleep
 from pprint import pprint
 
 
@@ -9,7 +8,7 @@ from database import DBConnection
 
 
 
-COOKIES_STR = 'd_c0="AGACDrRUpQuPTqD8WfNLPLOkf2C5KT21xUs=|1492853728"; _zap=acfffa44-5e86-4dd7-b66e-b29ca277c260; q_c1=d6168e6a8e73416a81c092fc706ae561|1499690037000|1492741497000; q_c1=d6168e6a8e73416a81c092fc706ae561|1499690037000|1492741497000; r_cap_id="NmFiOTFlZGQ2Yzk0NGIyYjlmMzQxMTYxNjJkZDExMjU=|1502073700|4fdc40c077bd1fbb79c5d9e9504673e3363313fb"; cap_id="MjhlNTI0MTRlN2Y3NDg3MDlkNjA4YmU3Y2VkZDk0ZTU=|1502073700|3a584bc8d380a81b0edff25778eb819d3b7e5d46"; capsion_ticket="2|1:0|10:1502076733|14:capsion_ticket|44:MjFkMjM5Y2I4NzEwNDk1Y2E0NjA4ZGFkZTU2NTgyODk=|74cb4a492141ff01822088156fcc683551a905fd1e28ef7cd2c6863ab710baf4"; z_c0="2|1:0|10:1502076734|4:z_c0|92:Mi4wQUVDQS1wbHp3UWtBWUFJT3RGU2xDeVlBQUFCZ0FsVk5QbXl2V1FBMFJ2Q2hUcWtZc0RfZnFMeFBtU2kyd2h2aUpn|48e75414777769fc777dc69436bb65b775a1dee04371bbde0a63af571309e238"; __utma=51854390.2140610821.1502112318.1502112318.1502112318.1; __utmc=51854390; __utmz=51854390.1502112318.1.1.utmcsr=zhihu.com|utmccn=(referral)|utmcmd=referral|utmcct=/settings/profile; __utmv=51854390.100-1|2=registration_date=20160411=1^3=entry_date=20160411=1; _xsrf=f8b3d4b8-88a0-467a-ba37-c48197fc1e76'
+COOKIES_STR = 'd_c0="AGACDrRUpQuPTqD8WfNLPLOkf2C5KT21xUs=|1492853728"; _zap=acfffa44-5e86-4dd7-b66e-b29ca277c260; q_c1=d6168e6a8e73416a81c092fc706ae561|1499690037000|1492741497000; q_c1=d6168e6a8e73416a81c092fc706ae561|1499690037000|1492741497000; r_cap_id="NmFiOTFlZGQ2Yzk0NGIyYjlmMzQxMTYxNjJkZDExMjU=|1502073700|4fdc40c077bd1fbb79c5d9e9504673e3363313fb"; cap_id="MjhlNTI0MTRlN2Y3NDg3MDlkNjA4YmU3Y2VkZDk0ZTU=|1502073700|3a584bc8d380a81b0edff25778eb819d3b7e5d46"; __utma=155987696.169479353.1502169342.1502169342.1502169342.1; __utmc=155987696; __utmz=155987696.1502169342.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); capsion_ticket="2|1:0|10:1502173780|14:capsion_ticket|44:NDM2YTAyZDliN2E5NGY5OWI3ZDA5Yzg4ZTViMGJmMDA=|566c447449e0e82f0468630e30519b928ef59fdb023b13c089185da203546b90"; z_c0="2|1:0|10:1502173785|4:z_c0|92:Mi4wQUVDQS1wbHp3UWtBWUFJT3RGU2xDeVlBQUFCZ0FsVk5XZWV3V1FDSHQ3QUpYSWhoM01ta0IzSy1GVy1IeGRqZlFR|e931bae038931bb056be216dc0d6117f77dcc6ac144ae23277fe5c53fd5baccf"; _xsrf=f8b3d4b8-88a0-467a-ba37-c48197fc1e76'
 ORIGIN_URL_TOKEN = "zing22"
 ORIGIN_NAME = "Lee Zing"
 ORIGIN_GENDER = 1 # 1 means male, 0 means female
@@ -94,7 +93,7 @@ def main():
             result = db_connection.find_one(args.get)
         pprint(result)
     if args.delete is not None:
-        print(bool(db_connection.delete_one(args.delete)))
+        print(db_connection.delete_many(args.delete))
 
 if __name__ == '__main__':
     main()

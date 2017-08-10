@@ -63,7 +63,7 @@ class DBConnection:
 
 
     def loading_number(self):
-        return len(self.collection.find({'name': 'Loading...'}))
+        return self.collection.find({'name': 'Loading...'}).count()
 
 
     def restore_url_token(self):

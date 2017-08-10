@@ -70,13 +70,28 @@ def crawl_one(url_token, db_connection, cookies_str):
     author = Author(url_token, cookies_str, profile['name'], profile['gender'], profile['avatar_url_template'])
     author.load_answers()
     db_connection.save_author(author)
+    return True
 
 
 def get_one(url_token, db_connection, cookies_str):
     result = db_connection.find_one(url_token)
     if result is None:
-        crawl_one(url_token, db_connection, cookies_str)
-        result = db_connection.find_one(url_token)
+        # 超过5个loading的就不跑了，需要测试
+        if db_connection.loading_number() > 5:
+            return {'name': 'Too many loadings'}
+        try:
+            db_connection.save_temp(url_token) # 占位，防止重复爬
+            crawl_result = crawl_one(url_token, db_connection, cookies_str)
+            print('crawl_result', crawl_result)
+            if not crawl_result:
+                db_connection.delete_many(url_token)
+                result = {"name": "Not Exist"}
+            else:
+                result = db_connection.find_one(url_token)
+        except Exception as e:
+            print(e)
+            db_connection.delete_many(url_token)
+            result = {"name": "ERROR"}
     return result
 
 

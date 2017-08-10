@@ -59,6 +59,10 @@
             <input type="text" name="url_token" placeholder="URL_TOKEN">
             <i class="inverted circular search link icon" id="find"></i>
         </div>
+        <div class="ui divider"></div>
+        <div class="ui input fluid">
+            <input type="text" name="cookies_str" placeholder="(Optional) COOKIES_STR">
+        </div>
         <div class="ui divider hidden"></div>
         <div class="ui grid">
             <div class="row centered">
@@ -126,13 +130,17 @@
 
             $("#find").click(() => {
                 var url_token = $("input[name='url_token']").val();
+                var cookies_str = $("input[name='cookies_str']").val();
+                var params_to_send = {
+                    url_token: url_token,
+                    cookies_str: cookies_str,
+                };
+                
                 $.ajax({
                     url: '/find',
                     method: 'POST',
                     dataType: 'json',
-                    data: {
-                        url_token: url_token
-                    },
+                    data: params_to_send,
                     success: (res) => {
                         $('#find-result-name > a').text(res.name);
                         $('#find-result-name > a').attr('href', 'https://www.zhihu.com/people/' + url_token);
@@ -149,10 +157,10 @@
             });
         });
     </script>
-    <!-- <script>
+     <script>
         if (window.location.hostname == '127.0.0.1' || window.location.hostname == 'localhost')
             document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
-    </script> -->
+    </script> 
 </body>
 
 </html>

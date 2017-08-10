@@ -42,7 +42,7 @@ class DBConnection:
 
         author_to_save['answer_pictures'] = list(pic_set)
 
-        self.collection.delete_one({'url_token': author.url_token})
+        self.collection.delete_many({'url_token': author.url_token})
         self.collection.insert_one(author_to_save)
 
         return author.url_token
@@ -52,6 +52,18 @@ class DBConnection:
             pic_set.add(pic.replace('_b.', '_r.'))
         for pic in re.findall(r"data-actualsrc=\"([\w./\-:]+)", content):
             pic_set.add(pic.replace('_b.', '_r.'))
+    
+
+    def save_temp(self, url_token):
+        temp_author = {
+            'url_token': url_token,
+            'name': 'Loading...'
+        }
+        return self.collection.insert_one(temp_author)
+
+
+    def loading_number(self):
+        return len(self.collection.find({'name': 'Loading...'}))
 
 
     def restore_url_token(self):

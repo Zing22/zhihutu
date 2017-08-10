@@ -1,6 +1,6 @@
 # ZhiHuTu
 
-爬取一个知乎答主所有回答里的照片，并保存到本地MongoDB中。
+爬取一个知乎答主所有回答里的图片，并保存到本地MongoDB中。
 
 
 ## Dependencies
@@ -29,9 +29,11 @@
 
     python zhihutu.py -h
 
+注意：只有50赞以上的回答中的照片才会被保存，这个设置可以在database.py中找到。
+
 ## Web Usage
 
-确保安装flask后，在命令行输出：
+确保安装flask后，在命令行输入：
 
     python web.py
 

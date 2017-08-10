@@ -1,3 +1,5 @@
+# -*- coding=utf8 -*-
+
 import datetime, re
 from pymongo import MongoClient, ASCENDING
 from author import Author

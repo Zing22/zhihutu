@@ -1,3 +1,5 @@
+# -*- coding=utf8 -*-
+
 import argparse
 from queue import Queue
 from pprint import pprint
@@ -61,13 +63,21 @@ def loop():
     print('OVER! Change origin and try again!')
 
 
-def crawl_one(url_token, db_connection):
-    profile = load_profile(url_token, COOKIES_STR)
+def crawl_one(url_token, db_connection, cookies_str):
+    profile = load_profile(url_token, cookies_str)
     if not profile:
         return False
-    author = Author(url_token, COOKIES_STR, profile['name'], profile['gender'], profile['avatar_url_template'])
+    author = Author(url_token, cookies_str, profile['name'], profile['gender'], profile['avatar_url_template'])
     author.load_answers()
     db_connection.save_author(author)
+
+
+def get_one(url_token, db_connection, cookies_str):
+    result = db_connection.find_one(url_token)
+    if result is None:
+        crawl_one(url_token, db_connection, cookies_str)
+        result = db_connection.find_one(url_token)
+    return result
 
 
 def main():
@@ -83,15 +93,11 @@ def main():
     args = parser.parse_args()
     db_connection = DBConnection()
     if args.crawl is not None:
-        crawl_one(args.crawl, db_connection)
+        crawl_one(args.crawl, db_connection, COOKIES_STR)
     if args.find is not None:
         pprint(db_connection.find_one(args.find))
     if args.get is not None:
-        result = db_connection.find_one(args.get)
-        if result is None:
-            crawl_one(args.get, db_connection)
-            result = db_connection.find_one(args.get)
-        pprint(result)
+        pprint(get_one(args.get, db_connection, COOKIES_STR))
     if args.delete is not None:
         print(db_connection.delete_many(args.delete))
 

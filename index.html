@@ -1,0 +1,158 @@
+<html>
+
+<head>
+    <title>ZhiHuTu</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css" />
+    <style>
+        iframe {
+            border: none;
+        }
+        #find-result-avatar {
+            width: 100px;
+            height: 100px;
+            padding: 0;
+            border: none;
+            box-shadow: 3px 3px 3px lightgray;
+        }
+        #find-result-name,
+        #find-result-gender {
+            text-align: center;
+        }
+        a.avatar-link {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+        }
+        iframe.avatar-iframe {
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+            box-sizing: content-box;
+        }
+        #find-result-answer-pictures {
+            border: 1px solid darkgrey;
+            border-radius: 10px;
+        }
+        a.ans-link {
+            display: inline-block;
+            width: 200px;
+            height: 112px;
+            overflow: hidden;
+            box-shadow: 3px 3px 3px lightgray;
+            margin: 10px 10px;
+        }
+        iframe.ans-pic-iframe {
+            width: 200px;
+            height: 112px;
+            pointer-events: none;
+            box-sizing: content-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ui container" style="padding-top:30px;">
+        <h1 class="ui header">ZhiHuTu</h1>
+        <div class="ui icon input fluid">
+            <input type="text" name="url_token" placeholder="URL_TOKEN">
+            <i class="inverted circular search link icon" id="find"></i>
+        </div>
+        <div class="ui divider hidden"></div>
+        <div class="ui grid">
+            <div class="row centered">
+                <div class="column" id="find-result-avatar">
+                    <a class="avatar-link" href="#">
+                        <iframe class="avatar-iframe" src="about:blank"></iframe>
+                    </a>
+                </div>
+            </div>
+            <div class="one column row">
+                <div class="column">
+                    <h2 class="ui header" id="find-result-name">
+                        <a href="#">---</a>
+                    </h2>
+                </div>
+                <div class="column">
+                    <h3 class="ui header" id="find-result-gender">-</h3>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column fluid" id="find-result-answer-pictures">
+                </div>
+            </div>
+            <div class="row centered">
+                <a href="https://www.github.com/zing22/zhihutu" target="_blank">
+                    <i class="github square icon large"></i>Zing22/zhihutu
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            function append_avatar(link_url, url_token, parent = "#find-result-avatar") {
+                link_raw = link_url.replace('_{size}.', '_r.');
+                link_url = link_url.replace('_{size}.', '_l.');
+                var link_tag = $('<a>').addClass('avatar-link').attr({
+                    href: link_raw,
+                    target: '_blank',
+                    rel: 'noreferrer'
+                });
+                var iframe_tag = $('<iframe>').addClass('avatar-iframe').attr({
+                    src: "javascript:window.location.replace('{0}')".replace('{0}', link_url)
+                });
+                link_tag.append(iframe_tag);
+                $(parent).append(link_tag);
+            }
+
+
+            function append_ans_pic(link_url, parent = "#find-result-answer-pictures") {
+                var link_tag = $('<a>').addClass('ans-link').attr({
+                    href: link_url,
+                    target: '_blank',
+                    rel: 'noreferrer'
+                });
+                link_url = link_url.replace('_r.', '_200x112.');
+                var iframe_tag = $('<iframe>').addClass('ans-pic-iframe').attr({
+                    src: "javascript:window.location.replace('{0}')".replace('{0}', link_url)
+                });
+                link_tag.append(iframe_tag);
+                $(parent).append(link_tag);
+            }
+
+            $("#find").click(() => {
+                var url_token = $("input[name='url_token']").val();
+                $.ajax({
+                    url: '/find',
+                    method: 'POST',
+                    dataType: 'json',
+                    data: {
+                        url_token: url_token
+                    },
+                    success: (res) => {
+                        $('#find-result-name > a').text(res.name);
+                        $('#find-result-name > a').attr('href', 'https://www.zhihu.com/people/' + url_token);
+                        $('#find-result-gender').text(res.gender==1? "Male": "Female");
+                        $('#find-result-avatar').empty();
+                        append_avatar(res.avatar_url_template, url_token);
+
+                        $('#find-result-answer-pictures').empty();
+                        res.answer_pictures.forEach(function (pic_link) {
+                            append_ans_pic(pic_link);
+                        });
+                    }
+                })
+            });
+        });
+    </script>
+    <script>
+        if (window.location.hostname == '127.0.0.1')
+            document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+    </script>
+</body>
+
+</html>
